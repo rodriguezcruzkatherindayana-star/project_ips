@@ -1,0 +1,247 @@
+{
+  "name": "Midnight Navy Design System",
+  "version": "1.0.0",
+  "description": "Professional, serene and premium health care design system with Midnight Navy primary color palette",
+  "tokens": {
+    "colors": {
+      "primary": {
+        "700": {
+          "value": "#171f37",
+          "description": "Midnight Navy - Main brand color for headers and primary elements"
+        },
+        "600": {
+          "value": "#1d2748",
+          "description": "Primary button fill, active states"
+        },
+        "500": {
+          "value": "#22305a",
+          "description": "Primary color variations, charts"
+        },
+        "400": {
+          "value": "#2a3a6d",
+          "description": "Secondary primary color"
+        },
+        "300": {
+          "value": "#314481",
+          "description": "Border focus states, outline buttons"
+        },
+        "200": {
+          "value": "#3a5098",
+          "description": "Primary lighter variations"
+        },
+        "100": {
+          "value": "#425bb0",
+          "description": "Primary hover states"
+        },
+        "050": {
+          "value": "#e9ecf6",
+          "description": "Background for selected states, light primary fills"
+        }
+      },
+      "accent": {
+        "500": {
+          "value": "#2F6FFF",
+          "description": "Accent color for links, highlights and interactive elements"
+        }
+      },
+      "neutral": {
+        "900": {
+          "value": "#0b1220",
+          "description": "Deepest text color, headings"
+        },
+        "700": {
+          "value": "#273046",
+          "description": "Secondary text, icons default state"
+        },
+        "500": {
+          "value": "#6b7280",
+          "description": "Muted text, placeholders, disabled states"
+        },
+        "300": {
+          "value": "#c6cad3",
+          "description": "Input borders, subtle dividers"
+        },
+        "100": {
+          "value": "#eef1f6",
+          "description": "Light backgrounds, disabled fills"
+        }
+      },
+      "semantic": {
+        "success": {
+          "value": "#22c55e",
+          "description": "Success states, positive feedback"
+        },
+        "warning": {
+          "value": "#f59e0b",
+          "description": "Warning states, attention needed"
+        },
+        "error": {
+          "value": "#ef4444",
+          "description": "Error states, destructive actions"
+        },
+        "info": {
+          "value": "#0ea5e9",
+          "description": "Information states, neutral feedback"
+        }
+      },
+      "surface": {
+        "value": "#f7f9fc",
+        "description": "Main background color"
+      },
+      "on-primary": {
+        "value": "#ffffff",
+        "description": "Text color on primary backgrounds"
+      }
+    },
+    "elevation": {
+      "subtle": {
+        "value": "0 2px 8px rgba(23, 31, 55, 0.1)",
+        "description": "Subtle shadow for cards and elevated elements"
+      }
+    },
+    "borders": {
+      "subtle": {
+        "value": "1px solid #e6eaf2",
+        "description": "Subtle border for cards and containers"
+      },
+      "radius": {
+        "value": "8px",
+        "description": "Standard border radius for components"
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "primary": {
+          "value": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
+          "description": "Primary font family for the application"
+        }
+      },
+      "fontWeight": {
+        "regular": {
+          "value": "400",
+          "description": "Regular text weight"
+        },
+        "medium": {
+          "value": "500",
+          "description": "Medium weight for labels"
+        },
+        "semibold": {
+          "value": "600",
+          "description": "Semibold for headings and emphasis"
+        }
+      },
+      "lineHeight": {
+        "tight": {
+          "value": "1.4",
+          "description": "Tight line height for headings"
+        },
+        "normal": {
+          "value": "1.5",
+          "description": "Normal line height for UI elements"
+        },
+        "relaxed": {
+          "value": "1.6",
+          "description": "Relaxed line height for body text"
+        }
+      }
+    },
+    "spacing": {
+      "touchTarget": {
+        "value": "44px",
+        "description": "Minimum touch target size for accessibility"
+      }
+    }
+  },
+  "components": {
+    "button": {
+      "primary": {
+        "background": "var(--primary-600)",
+        "color": "var(--on-primary)",
+        "fontWeight": "var(--font-weight-semibold)",
+        "shadow": "var(--elevation-subtle)",
+        "hover": {
+          "background": "var(--primary-700)"
+        }
+      },
+      "secondary": {
+        "background": "transparent",
+        "color": "var(--primary-600)",
+        "border": "1.5px solid var(--primary-300)",
+        "fontWeight": "var(--font-weight-semibold)",
+        "hover": {
+          "background": "var(--primary-050)"
+        }
+      },
+      "tertiary": {
+        "background": "transparent",
+        "color": "var(--primary-600)",
+        "fontWeight": "var(--font-weight-semibold)",
+        "hover": {
+          "background": "var(--neutral-100)"
+        }
+      }
+    },
+    "input": {
+      "default": {
+        "background": "#ffffff",
+        "border": "1px solid var(--neutral-300)",
+        "placeholder": "var(--neutral-500)",
+        "focus": {
+          "border": "var(--primary-300)",
+          "ring": "2px var(--primary-100)"
+        }
+      }
+    },
+    "card": {
+      "default": {
+        "background": "#ffffff",
+        "border": "var(--border-subtle)",
+        "shadow": "var(--elevation-subtle)",
+        "borderRadius": "var(--border-radius)"
+      }
+    },
+    "badge": {
+      "default": {
+        "background": "var(--primary-050)",
+        "color": "var(--primary-600)",
+        "borderRadius": "999px",
+        "fontWeight": "var(--font-weight-medium)"
+      },
+      "selected": {
+        "background": "var(--primary-400)",
+        "color": "var(--on-primary)",
+        "borderRadius": "999px",
+        "fontWeight": "var(--font-weight-medium)"
+      }
+    },
+    "navigation": {
+      "bottomNav": {
+        "active": "var(--primary-600)",
+        "inactive": "var(--neutral-500)",
+        "background": "#ffffff",
+        "border": "var(--border-subtle)",
+        "shadow": "var(--elevation-subtle)"
+      },
+      "indicator": {
+        "color": "var(--accent-500)",
+        "height": "2px"
+      }
+    },
+    "header": {
+      "gradient": "linear-gradient(180deg, var(--primary-700) 0%, var(--primary-500) 100%)",
+      "text": "var(--on-primary)"
+    }
+  },
+  "accessibility": {
+    "contrast": {
+      "normal": "4.5:1",
+      "large": "3:1"
+    },
+    "touchTargets": {
+      "minimum": "44px"
+    },
+    "focus": {
+      "visible": "Required on all interactive elements"
+    }
+  }
+}

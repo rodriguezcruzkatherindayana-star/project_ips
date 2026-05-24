@@ -1,0 +1,284 @@
+{
+  "name": "Brand Night Blue Design System",
+  "version": "2.0.0",
+  "description": "Professional, serene and premium health care design system with Brand Night Blue color palette derived from #171f37",
+  "tokens": {
+    "colors": {
+      "brand": {
+        "900": {
+          "value": "#0f1528",
+          "description": "Darkest brand color for deep overlays and dark gradients",
+          "mapping": "Verde oscuro de overlays/gradientes"
+        },
+        "800": {
+          "value": "#141b31",
+          "description": "Dark brand color for deep backgrounds and dark elements",
+          "mapping": "Verde oscuro de overlays/gradientes"
+        },
+        "700": {
+          "value": "#171f37",
+          "description": "Main brand color - Base color for headers and primary elements",
+          "mapping": "Verde principal de CTAs/headers"
+        },
+        "600": {
+          "value": "#1d2748",
+          "description": "Primary button fill, active states",
+          "mapping": "Verde principal de CTAs/headers"
+        },
+        "500": {
+          "value": "#22305a",
+          "description": "Brand color variations, charts, active icons",
+          "mapping": "Verde principal de CTAs/headers"
+        },
+        "400": {
+          "value": "#2a3a6d",
+          "description": "Secondary brand color for medium elements",
+          "mapping": "Verde medio de botones secundarios/bordes"
+        },
+        "300": {
+          "value": "#314481",
+          "description": "Border focus states, outline buttons",
+          "mapping": "Verde medio de botones secundarios/bordes"
+        },
+        "200": {
+          "value": "#3a5098",
+          "description": "Brand lighter variations for hover states",
+          "mapping": "Verde claro de chips/hover"
+        },
+        "100": {
+          "value": "#e3e7f4",
+          "description": "Very light tint for backgrounds and chips",
+          "mapping": "Verde muy claro de fondos/etiquetas"
+        },
+        "050": {
+          "value": "#f1f3f9",
+          "description": "Subtle background color",
+          "mapping": "Verde muy claro de fondos/etiquetas"
+        }
+      },
+      "accent": {
+        "500": {
+          "value": "#2F6FFF",
+          "description": "Accent color for links, highlights and interactive indicators"
+        }
+      },
+      "neutral": {
+        "900": {
+          "value": "#0b1220",
+          "description": "Deepest text color, headings"
+        },
+        "700": {
+          "value": "#273046",
+          "description": "Secondary text, icons default state"
+        },
+        "500": {
+          "value": "#6b7280",
+          "description": "Muted text, placeholders, disabled states"
+        },
+        "300": {
+          "value": "#c6cad3",
+          "description": "Input borders, subtle dividers"
+        },
+        "100": {
+          "value": "#eef1f6",
+          "description": "Light backgrounds, disabled fills"
+        }
+      },
+      "semantic": {
+        "success": {
+          "value": "#22c55e",
+          "description": "Success states, positive feedback"
+        },
+        "warning": {
+          "value": "#f59e0b",
+          "description": "Warning states, attention needed"
+        },
+        "error": {
+          "value": "#ef4444",
+          "description": "Error states, destructive actions"
+        },
+        "info": {
+          "value": "#0ea5e9",
+          "description": "Information states, neutral feedback"
+        }
+      },
+      "surface": {
+        "value": "#f1f3f9",
+        "description": "Main background color (updated to brand-050)"
+      },
+      "on-primary": {
+        "value": "#ffffff",
+        "description": "Text color on brand backgrounds"
+      }
+    },
+    "elevation": {
+      "subtle": {
+        "value": "0 2px 8px rgba(23, 31, 55, 0.1)",
+        "description": "Subtle shadow for cards and elevated elements"
+      }
+    },
+    "borders": {
+      "subtle": {
+        "value": "1px solid #e6eaf2",
+        "description": "Subtle border for cards and containers"
+      },
+      "radius": {
+        "value": "8px",
+        "description": "Standard border radius for components"
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "primary": {
+          "value": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif",
+          "description": "Primary font family for the application"
+        }
+      },
+      "fontWeight": {
+        "regular": {
+          "value": "400",
+          "description": "Regular text weight"
+        },
+        "medium": {
+          "value": "500",
+          "description": "Medium weight for labels"
+        },
+        "semibold": {
+          "value": "600",
+          "description": "Semibold for headings and emphasis"
+        }
+      },
+      "lineHeight": {
+        "tight": {
+          "value": "1.4",
+          "description": "Tight line height for headings"
+        },
+        "normal": {
+          "value": "1.5",
+          "description": "Normal line height for UI elements"
+        },
+        "relaxed": {
+          "value": "1.6",
+          "description": "Relaxed line height for body text"
+        }
+      }
+    },
+    "spacing": {
+      "touchTarget": {
+        "value": "44px",
+        "description": "Minimum touch target size for accessibility"
+      }
+    }
+  },
+  "components": {
+    "button": {
+      "primary": {
+        "background": "var(--brand-600)",
+        "color": "var(--on-primary)",
+        "fontWeight": "var(--font-weight-semibold)",
+        "shadow": "var(--elevation-subtle)",
+        "hover": {
+          "background": "var(--brand-700)"
+        }
+      },
+      "secondary": {
+        "background": "transparent",
+        "color": "var(--brand-600)",
+        "border": "1.5px solid var(--brand-300)",
+        "fontWeight": "var(--font-weight-semibold)",
+        "hover": {
+          "background": "var(--brand-050)"
+        }
+      },
+      "tertiary": {
+        "background": "transparent",
+        "color": "var(--brand-600)",
+        "fontWeight": "var(--font-weight-semibold)",
+        "hover": {
+          "background": "var(--brand-050)"
+        }
+      }
+    },
+    "input": {
+      "default": {
+        "background": "#ffffff",
+        "border": "1px solid var(--neutral-300)",
+        "placeholder": "var(--neutral-500)",
+        "focus": {
+          "border": "var(--brand-300)",
+          "ring": "2px var(--brand-100)"
+        }
+      }
+    },
+    "card": {
+      "default": {
+        "background": "#ffffff",
+        "border": "var(--border-subtle)",
+        "shadow": "var(--elevation-subtle)",
+        "borderRadius": "var(--border-radius)"
+      }
+    },
+    "badge": {
+      "default": {
+        "background": "var(--brand-100)",
+        "color": "var(--brand-600)",
+        "borderRadius": "999px",
+        "fontWeight": "var(--font-weight-medium)"
+      },
+      "selected": {
+        "background": "var(--brand-400)",
+        "color": "var(--on-primary)",
+        "borderRadius": "999px",
+        "fontWeight": "var(--font-weight-medium)"
+      }
+    },
+    "navigation": {
+      "bottomNav": {
+        "active": "var(--brand-600)",
+        "inactive": "var(--neutral-500)",
+        "background": "#ffffff",
+        "border": "var(--border-subtle)",
+        "shadow": "var(--elevation-subtle)",
+        "activeBackground": "var(--brand-050)"
+      },
+      "indicator": {
+        "color": "var(--accent-500)",
+        "height": "2px"
+      }
+    },
+    "header": {
+      "gradient": "linear-gradient(180deg, var(--brand-700) 0%, var(--brand-500) 100%)",
+      "text": "var(--on-primary)"
+    },
+    "healthMetrics": {
+      "primary": {
+        "background": "var(--brand-100)",
+        "hoverBackground": "var(--brand-200) with 50% opacity",
+        "iconColor": "var(--brand-500)",
+        "textColor": "var(--brand-700)"
+      }
+    }
+  },
+  "colorMapping": {
+    "description": "1:1 mapping from original green family to brand night blue family",
+    "mappings": {
+      "Verde muy claro de fondos/etiquetas": ["brand-050", "brand-100"],
+      "Verde claro de chips/hover": ["brand-100", "brand-200"],
+      "Verde medio de botones secundarios/bordes": ["brand-300", "brand-400"],
+      "Verde principal de CTAs/headers": ["brand-600", "brand-700"],
+      "Verde oscuro de overlays/gradientes": ["brand-800", "brand-900"]
+    }
+  },
+  "accessibility": {
+    "contrast": {
+      "normal": "4.5:1",
+      "large": "3:1"
+    },
+    "touchTargets": {
+      "minimum": "44px"
+    },
+    "focus": {
+      "visible": "Required on all interactive elements"
+    }
+  }
+}
