@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Label } from './ui/label';
-import { Calendar, Clock, User, MapPin, Plus, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, User, MapPin, Plus, CheckCircle, X, ArrowLeft, ChevronRight } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { motion } from 'motion/react';
 import { toast } from 'sonner@2.0.3';
@@ -17,15 +17,17 @@ interface User {
   documentId: string;
   phone: string;
   eps: string;
+  birthDate?: string;
 }
 
 interface AppointmentsScreenProps {
   user: User;
   showNewAppointmentForm?: boolean;
   onDoctorClick?: (doctorId: string) => void;
+  onViewAppointmentDetail?: (appointment: any) => void;
 }
 
-export function AppointmentsScreen({ user, showNewAppointmentForm = false, onDoctorClick }: AppointmentsScreenProps) {
+export function AppointmentsScreen({ user, showNewAppointmentForm = false, onDoctorClick, onViewAppointmentDetail }: AppointmentsScreenProps) {
   const [showNewAppointment, setShowNewAppointment] = useState(showNewAppointmentForm);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
@@ -121,6 +123,28 @@ export function AppointmentsScreen({ user, showNewAppointmentForm = false, onDoc
       month: 'long', 
       day: 'numeric' 
     });
+  };
+
+  const formatAppointmentDate = (dateString: string) => {
+    const date = new Date(dateString);
+    // Para que quede como "28 May 2026"
+    return date.toLocaleDateString('es-CO', { 
+      day: '2-digit', 
+      month: 'short', 
+      year: 'numeric' 
+    }).replace('.', ''); // a veces 'short' incluye un punto
+  };
+
+  const calculateAge = (birthDate?: string) => {
+    if (!birthDate) return 45; // Default age if not provided
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
   };
 
   const handleConfirmAppointment = () => {
@@ -368,6 +392,12 @@ export function AppointmentsScreen({ user, showNewAppointmentForm = false, onDoc
     );
   }
 
+  const handleViewDetail = (appointment: any) => {
+    if (onViewAppointmentDetail) {
+      onViewAppointmentDetail(appointment);
+    }
+  };
+
   return (
     <div className="p-4 overflow-x-hidden">
       {/* Header */}
@@ -416,25 +446,25 @@ export function AppointmentsScreen({ user, showNewAppointmentForm = false, onDoc
 
         <TabsContent value="all" className="space-y-3">
           {appointments.map((appointment) => (
-            <AppointmentCard key={appointment.id} appointment={appointment} onDoctorClick={onDoctorClick} />
+            <AppointmentCard key={appointment.id} appointment={appointment} onDoctorClick={onDoctorClick} onViewDetail={() => handleViewDetail(appointment)} />
           ))}
         </TabsContent>
 
         <TabsContent value="upcoming" className="space-y-3">
           {filterAppointments('confirmed').concat(filterAppointments('pending')).map((appointment) => (
-            <AppointmentCard key={appointment.id} appointment={appointment} onDoctorClick={onDoctorClick} />
+            <AppointmentCard key={appointment.id} appointment={appointment} onDoctorClick={onDoctorClick} onViewDetail={() => handleViewDetail(appointment)} />
           ))}
         </TabsContent>
 
         <TabsContent value="completed" className="space-y-3">
           {filterAppointments('completed').map((appointment) => (
-            <AppointmentCard key={appointment.id} appointment={appointment} onDoctorClick={onDoctorClick} />
+            <AppointmentCard key={appointment.id} appointment={appointment} onDoctorClick={onDoctorClick} onViewDetail={() => handleViewDetail(appointment)} />
           ))}
         </TabsContent>
 
         <TabsContent value="cancelled" className="space-y-3">
           {filterAppointments('cancelled').map((appointment) => (
-            <AppointmentCard key={appointment.id} appointment={appointment} onDoctorClick={onDoctorClick} />
+            <AppointmentCard key={appointment.id} appointment={appointment} onDoctorClick={onDoctorClick} onViewDetail={() => handleViewDetail(appointment)} />
           ))}
         </TabsContent>
       </Tabs>
@@ -442,97 +472,49 @@ export function AppointmentsScreen({ user, showNewAppointmentForm = false, onDoc
   );
 }
 
-function AppointmentCard({ appointment, onDoctorClick }: { appointment: any; onDoctorClick?: (doctorId: string) => void }) {
+function AppointmentCard({ appointment, onDoctorClick, onViewDetail }: { appointment: any; onDoctorClick?: (doctorId: string) => void; onViewDetail: () => void }) {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return <Badge className="bg-green-100 text-green-700">Confirmada</Badge>;
+        return <Badge className="bg-green-100 text-green-700 hover:bg-green-100 rounded-full px-3 py-1 text-xs font-medium border-0">Confirmada</Badge>;
       case 'pending':
-        return <Badge className="bg-amber-100 text-amber-700">Pendiente</Badge>;
+        return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 rounded-full px-3 py-1 text-xs font-medium border-0">Asignada</Badge>;
       case 'completed':
-        return <Badge className="bg-blue-100 text-blue-700">Completada</Badge>;
+        return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 rounded-full px-3 py-1 text-xs font-medium border-0">Completada</Badge>;
       case 'cancelled':
-        return <Badge className="bg-red-100 text-red-700">Cancelada</Badge>;
+        return <Badge className="bg-red-100 text-red-700 hover:bg-red-100 rounded-full px-3 py-1 text-xs font-medium border-0">Cancelada</Badge>;
       default:
-        return <Badge variant="secondary">{status}</Badge>;
+        return <Badge variant="secondary" className="rounded-full px-3 py-1">{status}</Badge>;
     }
   };
 
-  const handleDoctorClick = () => {
-    const doctor = getDoctorByName(appointment.doctor);
-    if (doctor && onDoctorClick) {
-      onDoctorClick(doctor.id);
-    }
+  const formatAppointmentDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-CO', { 
+      day: '2-digit', 
+      month: 'short', 
+      year: 'numeric' 
+    }).replace('.', ''); 
   };
 
   return (
-    <Card className="bg-white border-gray-200 shadow-sm">
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-3">
-          <div>
-            <p className="text-blue-700">{appointment.specialty}</p>
-            <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
-              <User className="h-4 w-4" />
-              <button 
-                onClick={handleDoctorClick}
-                className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
-              >
-                {appointment.doctor}
-              </button>
-            </div>
-          </div>
+    <Card className="bg-white border-gray-100 shadow-sm rounded-[24px] mb-4 cursor-pointer hover:shadow-md active:scale-[0.98] transition-all" onClick={onViewDetail}>
+      <CardContent className="p-5 relative">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="font-semibold text-[17px] text-[#001f3f]">{appointment.specialty}</h3>
           {getStatusBadge(appointment.status)}
         </div>
-
-        <div className="space-y-2 text-sm">
-          <div className="flex items-center gap-2 text-gray-600">
-            <Calendar className="h-4 w-4" />
-            <span>{appointment.date}</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <Clock className="h-4 w-4" />
-            <span>{appointment.time}</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <MapPin className="h-4 w-4" />
-            <span>{appointment.location}</span>
-          </div>
+        
+        <p className="text-gray-500 mb-4 text-[15px]">{appointment.doctor}</p>
+        
+        <div className="flex justify-between items-center mt-2">
+          <span className="text-gray-600 font-medium text-[14px]">
+            {formatAppointmentDate(appointment.date)} | {appointment.time}
+          </span>
+          <span className="text-blue-600 font-semibold text-sm flex items-center gap-1">
+            Ver Detalle Cita <ChevronRight className="w-4 h-4" />
+          </span>
         </div>
-
-        {appointment.notes && (
-          <p className="text-sm text-gray-600 mt-3 italic">{appointment.notes}</p>
-        )}
-
-        {(appointment.status === 'confirmed' || appointment.status === 'pending') && (
-          <div className="flex gap-2 mt-4">
-            <Button 
-              onClick={() => {
-                toast.info('Reprogramar cita', {
-                  description: 'Puedes reprogramar tu cita llamando al +57 (1) 234 5678'
-                });
-              }}
-              variant="outline" 
-              size="sm" 
-              className="flex-1 border-blue-300 text-blue-600 hover:bg-blue-50 min-h-[44px]"
-            >
-              Reprogramar
-            </Button>
-            <Button 
-              onClick={() => {
-                if (confirm('¿Estás segura de que deseas cancelar esta cita?')) {
-                  toast.success('Cita cancelada', {
-                    description: 'Tu cita ha sido cancelada exitosamente. Puedes agendar una nueva cuando lo desees.'
-                  });
-                }
-              }}
-              variant="outline" 
-              size="sm" 
-              className="flex-1 text-red-600 border-red-300 hover:bg-red-50 min-h-[44px]"
-            >
-              Cancelar
-            </Button>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

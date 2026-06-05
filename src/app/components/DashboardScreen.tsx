@@ -4,13 +4,11 @@ import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { EpidemiologicalAlertCard } from './EpidemiologicalAlertCard';
 import { NewsCarousel, NewsArticle } from './NewsCarousel';
-import { Calendar, Clock, FileText, Edit3, Stethoscope, Ear, Volume2, MessageSquare, Activity, Headphones, Bell, AlertCircle, CheckCircle, User, X, Download, Share2, MapPin, Phone, Mail, Video } from 'lucide-react';
+import { Calendar, Clock, FileText, Edit3, Stethoscope, Ear, Volume2, MessageSquare, Activity, Headphones, Bell, AlertCircle, CheckCircle, Video, ChevronRight } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
-import type { Notification } from '../contexts/AppContext';
 import { getDoctorByName } from '../data/doctors';
 import { motion, AnimatePresence } from 'motion/react';
 import { AppointmentDetailModal } from './AppointmentDetailModal';
-import { ResultDetailModal } from './ResultDetailModal';
 import { ArticleDetailModal } from './ArticleDetailModal';
 
 interface User {
@@ -27,11 +25,13 @@ interface DashboardScreenProps {
   user: User;
   onNavigate?: (screen: string) => void;
   onNavigateToArticle?: (article: NewsArticle) => void;
-  onNavigateToService?: (service: SpecializedService) => void;
+  onNavigateToService?: (service: any) => void;
   onDoctorClick?: (doctorId: string) => void;
   onNavigateToEpidemiologicalAnalysis?: () => void;
   onToggleNotifications?: () => void;
-  onNotificationClick?: (notification: Notification) => void;
+  onNotificationClick?: (notification: any) => void;
+  onNavigateToAppointmentDetail?: (appointment: any) => void;
+  onNavigateToResultDetail?: (result: any) => void;
 }
 
 interface SpecializedService {
@@ -57,7 +57,9 @@ export function DashboardScreen({
   onDoctorClick,
   onNavigateToEpidemiologicalAnalysis,
   onToggleNotifications,
-  onNotificationClick
+  onNotificationClick,
+  onNavigateToAppointmentDetail,
+  onNavigateToResultDetail
 }: DashboardScreenProps) {
   const { user: contextUser } = useApp();
   
@@ -69,7 +71,6 @@ export function DashboardScreen({
 
   // Modal states
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
-  const [selectedResult, setSelectedResult] = useState<any>(null);
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
 
   // Helper function to get notification icon
@@ -638,44 +639,57 @@ Tu bienestar emocional es nuestra prioridad. Contáctanos hoy.`,
             </div>
 
             {upcomingAppointments.map((appointment) => {
-              const handleDoctorClick = (e: React.MouseEvent) => {
-                e.stopPropagation();
-                const doctor = getDoctorByName(appointment.doctor);
-                if (doctor && onDoctorClick) {
-                  onDoctorClick(doctor.id);
+              const formatAppointmentDate = (dateString: string) => {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('es-CO', { 
+                  day: '2-digit', 
+                  month: 'short', 
+                  year: 'numeric' 
+                }).replace('.', ''); 
+              };
+              
+              const getStatusBadge = (status: string) => {
+                switch (status) {
+                  case 'confirmed':
+                    return <Badge className="bg-green-100 text-green-700 hover:bg-green-100 rounded-full px-3 py-1 text-xs font-medium border-0">Confirmada</Badge>;
+                  case 'pending':
+                    return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 rounded-full px-3 py-1 text-xs font-medium border-0">Asignada</Badge>;
+                  case 'completed':
+                    return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 rounded-full px-3 py-1 text-xs font-medium border-0">Completada</Badge>;
+                  case 'cancelled':
+                    return <Badge className="bg-red-100 text-red-700 hover:bg-red-100 rounded-full px-3 py-1 text-xs font-medium border-0">Cancelada</Badge>;
+                  default:
+                    return <Badge variant="secondary" className="rounded-full px-3 py-1">{status}</Badge>;
                 }
               };
 
               return (
                 <div 
                   key={appointment.id} 
-                  onClick={() => setSelectedAppointment(appointment)}
-                  className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 active:bg-gray-100 transition-all min-h-[64px] cursor-pointer" 
-                  style={{ borderBottom: '1px solid rgba(0, 0, 0, 0.08)' }}
-                >
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-900 leading-snug">{appointment.specialty}</p>
-                    <button 
-                      onClick={handleDoctorClick}
-                      className="text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors leading-snug text-left"
-                    >
-                      {appointment.doctor}
-                    </button>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Clock className="h-4 w-4 text-gray-500" />
-                      <span className="text-xs text-gray-500">
-                        {appointment.date} - {appointment.time}
-                      </span>
-                    </div>
-                  </div>
-                  <Badge 
-                    className={appointment.status === 'confirmed' 
-                      ? 'bg-green-100 text-green-600 font-medium rounded-full px-3 py-1.5' 
-                      : 'bg-gray-100 text-gray-700 font-medium rounded-full px-3 py-1.5'
+                  onClick={() => {
+                    if (onNavigateToAppointmentDetail) {
+                      onNavigateToAppointmentDetail(appointment);
+                    } else {
+                      setSelectedAppointment(appointment);
                     }
-                  >
-                    {appointment.status === 'confirmed' ? 'Confirmada' : 'Pendiente'}
-                  </Badge>
+                  }}
+                  className="bg-white border border-gray-100 shadow-sm rounded-[24px] p-5 relative mb-4 hover:shadow-md active:scale-[0.98] transition-all cursor-pointer"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-semibold text-[17px] text-[#001f3f]">{appointment.specialty}</h3>
+                    {getStatusBadge(appointment.status)}
+                  </div>
+                  
+                  <p className="text-gray-500 mb-4 text-[15px]">{appointment.doctor}</p>
+                  
+                  <div className="flex justify-between items-center mt-2">
+                    <span className="text-gray-600 font-medium text-[14px]">
+                      {formatAppointmentDate(appointment.date)} | {appointment.time}
+                    </span>
+                    <span className="text-blue-600 font-semibold text-sm flex items-center gap-1">
+                      Ver Detalle Cita <ChevronRight className="w-4 h-4" />
+                    </span>
+                  </div>
                 </div>
               );
             })}
@@ -694,17 +708,30 @@ Tu bienestar emocional es nuestra prioridad. Contáctanos hoy.`,
             {recentResults.map((result) => (
               <div 
                 key={result.id} 
-                onClick={() => setSelectedResult(result)}
-                className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 active:bg-gray-100 transition-all min-h-[64px] cursor-pointer" 
-                style={{ borderBottom: '1px solid rgba(0, 0, 0, 0.08)' }}
+                onClick={() => {
+                  if (onNavigateToResultDetail) {
+                    onNavigateToResultDetail(result);
+                  }
+                }}
+                className="bg-white border border-gray-100 shadow-sm rounded-[24px] p-5 relative mb-4 hover:shadow-md active:scale-[0.98] transition-all cursor-pointer" 
               >
-                <div className="flex-1">
-                  <p className="font-semibold text-gray-900 leading-snug">{result.name}</p>
-                  <p className="text-sm text-gray-600 leading-snug">{result.type} • {result.date}</p>
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-semibold text-[17px] text-[#001f3f] leading-snug">{result.name}</h3>
+                  <Badge className="bg-green-100 text-green-700 hover:bg-green-100 font-medium rounded-full px-3 py-1 text-xs border-0">
+                    Disponible
+                  </Badge>
                 </div>
-                <Badge className="bg-green-50 text-green-600 font-medium rounded-full px-3 py-1.5">
-                  Disponible
-                </Badge>
+                
+                <p className="text-gray-500 mb-4 text-[15px]">{result.type}</p>
+                
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-gray-600 font-medium text-[14px]">
+                    {result.date}
+                  </span>
+                  <span className="text-blue-600 font-semibold text-sm flex items-center gap-1">
+                    Ver Detalle <ChevronRight className="w-4 h-4" />
+                  </span>
+                </div>
               </div>
             ))}
           </CardContent>
@@ -731,22 +758,6 @@ Tu bienestar emocional es nuestra prioridad. Contáctanos hoy.`,
 
       {/* Modals */}
       <AnimatePresence>
-        {selectedAppointment && (
-          <AppointmentDetailModal
-            appointment={selectedAppointment}
-            onClose={() => setSelectedAppointment(null)}
-            onDoctorClick={onDoctorClick}
-          />
-        )}
-
-        {selectedResult && (
-          <ResultDetailModal
-            result={selectedResult}
-            onClose={() => setSelectedResult(null)}
-            onViewFull={() => onNavigate?.('results')}
-          />
-        )}
-
         {selectedArticle && (
           <ArticleDetailModal
             article={selectedArticle}

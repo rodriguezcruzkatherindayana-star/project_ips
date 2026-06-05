@@ -398,13 +398,12 @@ export function ChatScreen({ user }: ChatScreenProps) {
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               className="flex-1 min-h-[44px]"
             />
-            <Button
+            <Button 
               onClick={handleSendMessage}
               disabled={!inputMessage.trim()}
-              aria-label="Enviar mensaje"
               className="bg-blue-500 hover:bg-blue-600 min-h-[44px] min-w-[44px]"
             >
-              <Send className="h-4 w-4" aria-hidden="true" />
+              <Send className="h-4 w-4" />
             </Button>
           </div>
         </TabsContent>

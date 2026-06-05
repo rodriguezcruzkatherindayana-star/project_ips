@@ -1,6 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
-import { refreshSession, logout as authLogout, hasStoredSession } from '../services/authService';
-import { getSecondsUntilExpiry } from '../services/jwtService';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export interface User {
   id: string;
@@ -47,28 +45,21 @@ interface AppContextType {
   currentUser: User | null;
   setCurrentUser: (user: User | null) => void;
   updateUserProfile: (updates: Partial<User>) => void;
-
-  // Auth
-  accessToken: string | null;
-  setSession: (user: User, token: string) => void;
-  logout: () => void;
-  isAuthenticated: boolean;
-  isRestoringSession: boolean;
-
+  
   // Navigation
   activeScreen: string;
   setActiveScreen: (screen: string) => void;
   navigationHistory: NavigationHistory[];
   goBack: () => void;
   canGoBack: boolean;
-
+  
   // Notifications
   notifications: Notification[];
   addNotification: (notification: Omit<Notification, 'id' | 'read'>) => void;
   markNotificationAsRead: (id: string) => void;
   clearNotification: (id: string) => void;
   unreadCount: number;
-
+  
   // UI State
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
@@ -89,59 +80,21 @@ interface AppProviderProps {
 }
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-  const [currentUser, setCurrentUserState] = useState<User | null>(null);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [isRestoringSession, setIsRestoringSession] = useState(true);
-  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Restore session on mount using refresh token from localStorage
-  useEffect(() => {
-    if (!hasStoredSession()) {
-      setIsRestoringSession(false);
-      return;
-    }
-    refreshSession()
-      .then(result => {
-        if (result) {
-          setCurrentUserState(result.user);
-          setAccessToken(result.accessToken);
-          scheduleRefresh(result.accessToken);
+  // Load user from localStorage on mount
+  const [currentUser, setCurrentUserState] = useState<User | null>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('integra_ips_user');
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (e) {
+          console.error('Error parsing stored user:', e);
+          return null;
         }
-      })
-      .catch(() => {})
-      .finally(() => setIsRestoringSession(false));
-  }, []);
-
-  // Schedule silent token refresh 60s before expiry
-  function scheduleRefresh(token: string) {
-    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
-    const ttl = getSecondsUntilExpiry(token);
-    const delay = Math.max((ttl - 60) * 1000, 0);
-    refreshTimerRef.current = setTimeout(async () => {
-      const result = await refreshSession();
-      if (result) {
-        setAccessToken(result.accessToken);
-        scheduleRefresh(result.accessToken);
-      } else {
-        handleLogout();
       }
-    }, delay);
-  }
-
-  function handleSetSession(user: User, token: string) {
-    setCurrentUserState(user);
-    setAccessToken(token);
-    scheduleRefresh(token);
-  }
-
-  function handleLogout() {
-    authLogout();
-    setCurrentUserState(null);
-    setAccessToken(null);
-    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
-    setActiveScreenState('dashboard');
-    setNavigationHistory([]);
-  }
+    }
+    return null;
+  });
 
   const [activeScreen, setActiveScreenState] = useState('dashboard');
   const [navigationHistory, setNavigationHistory] = useState<NavigationHistory[]>([]);
@@ -208,14 +161,22 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   ]);
   const [isLoading, setIsLoading] = useState(false);
 
-
-  const MAX_HISTORY = 20;
+  // Save user to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (currentUser) {
+        localStorage.setItem('integra_ips_user', JSON.stringify(currentUser));
+      } else {
+        localStorage.removeItem('integra_ips_user');
+      }
+    }
+  }, [currentUser]);
 
   const setActiveScreen = (screen: string) => {
-    setNavigationHistory(prev => {
-      const next = [...prev, { screen: activeScreen, timestamp: Date.now() }];
-      return next.length > MAX_HISTORY ? next.slice(next.length - MAX_HISTORY) : next;
-    });
+    setNavigationHistory(prev => [
+      ...prev,
+      { screen: activeScreen, timestamp: Date.now() }
+    ]);
     setActiveScreenState(screen);
   };
 
@@ -266,11 +227,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     currentUser,
     setCurrentUser: setCurrentUserState,
     updateUserProfile,
-    accessToken,
-    setSession: handleSetSession,
-    logout: handleLogout,
-    isAuthenticated: !!accessToken && !!currentUser,
-    isRestoringSession,
     activeScreen,
     setActiveScreen,
     navigationHistory,
@@ -282,7 +238,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     clearNotification,
     unreadCount,
     isLoading,
-    setIsLoading,
+    setIsLoading
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

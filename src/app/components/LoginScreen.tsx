@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Eye, EyeOff, Bell, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Bell } from 'lucide-react';
 import integraLogo from 'figma:asset/087495b47610937c9d7aa7f7613363813a44b18b.png';
 
 interface LoginScreenProps {
-  onLogin: (email: string, password: string) => Promise<void>;
+  onLogin: (email: string, password: string) => void;
   onShowRegister: () => void;
-  onBiometricLogin?: () => Promise<void>;
-  error?: string | null;
 }
 
-export function LoginScreen({ onLogin, onShowRegister, onBiometricLogin, error }: LoginScreenProps) {
+export function LoginScreen({ onLogin, onShowRegister }: LoginScreenProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -20,26 +18,29 @@ export function LoginScreen({ onLogin, onShowRegister, onBiometricLogin, error }
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    try {
-      await onLogin(username, password);
-    } finally {
+    
+    // Simulate API call
+    setTimeout(() => {
+      onLogin(username, password);
       setLoading(false);
-    }
+    }, 1500);
   };
 
-  const handleFaceIdLogin = async () => {
-    if (!onBiometricLogin) return;
+  const handleFaceIdLogin = () => {
     setLoading(true);
-    try {
-      await onBiometricLogin();
-    } finally {
+    // Simulate Face ID authentication
+    setTimeout(() => {
+      onLogin('maria.garcia@email.com', 'password');
       setLoading(false);
-    }
+    }, 2000);
   };
 
   const handleDemoLogin = () => {
     setUsername('demo@integra.com');
     setPassword('demo123');
+    setTimeout(() => {
+      onLogin('demo@integra.com', 'demo123');
+    }, 500);
   };
 
   return (
@@ -70,51 +71,36 @@ export function LoginScreen({ onLogin, onShowRegister, onBiometricLogin, error }
             </div>
           </div>
 
-          {/* Error Message */}
-          {error && (
-            <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm" role="alert">
-              <AlertCircle className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-              <span>{error}</span>
-            </div>
-          )}
-
           {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-4">
             {/* Username Field */}
             <div>
-              <label htmlFor="login-username" className="sr-only">Usuario o correo electrónico</label>
               <Input
-                id="login-username"
                 type="text"
                 placeholder="Usuario"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full h-14 px-4 bg-white border border-gray-300 rounded-lg placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
                 required
-                autoComplete="username"
               />
             </div>
-
+            
             {/* Password Field */}
             <div className="relative">
-              <label htmlFor="login-password" className="sr-only">Contraseña</label>
               <Input
-                id="login-password"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full h-14 px-4 pr-12 bg-white border border-gray-300 rounded-lg placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
                 required
-                autoComplete="current-password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                 className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
               >
-                {showPassword ? <EyeOff className="h-5 w-5" aria-hidden="true" /> : <Eye className="h-5 w-5" aria-hidden="true" />}
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
 
@@ -140,7 +126,6 @@ export function LoginScreen({ onLogin, onShowRegister, onBiometricLogin, error }
           <div className="text-center space-y-4 pt-8">
             <button
               onClick={handleFaceIdLogin}
-              aria-label="Iniciar sesión con Face ID"
               className="inline-flex flex-col items-center space-y-2 p-4 hover:bg-gray-50 rounded-lg transition-colors min-h-[44px] min-w-[44px]"
               disabled={loading}
             >

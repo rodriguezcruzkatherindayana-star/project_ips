@@ -182,8 +182,6 @@ export function VideoCallScreen({ appointmentData, onEndCall }: VideoCallScreenP
           {/* Mute Button */}
           <button
             onClick={toggleMute}
-            aria-label={isMuted ? 'Activar micrófono' : 'Silenciar micrófono'}
-            aria-pressed={isMuted}
             className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${
               isMuted
                 ? 'bg-red-500 hover:bg-red-600'
@@ -191,17 +189,15 @@ export function VideoCallScreen({ appointmentData, onEndCall }: VideoCallScreenP
             }`}
           >
             {isMuted ? (
-              <MicOff className="h-6 w-6 text-white" aria-hidden="true" />
+              <MicOff className="h-6 w-6 text-white" />
             ) : (
-              <Mic className="h-6 w-6 text-white" aria-hidden="true" />
+              <Mic className="h-6 w-6 text-white" />
             )}
           </button>
 
           {/* Video Button */}
           <button
             onClick={toggleVideo}
-            aria-label={isVideoOff ? 'Activar cámara' : 'Apagar cámara'}
-            aria-pressed={isVideoOff}
             className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${
               isVideoOff
                 ? 'bg-red-500 hover:bg-red-600'
@@ -209,17 +205,15 @@ export function VideoCallScreen({ appointmentData, onEndCall }: VideoCallScreenP
             }`}
           >
             {isVideoOff ? (
-              <VideoOff className="h-6 w-6 text-white" aria-hidden="true" />
+              <VideoOff className="h-6 w-6 text-white" />
             ) : (
-              <Video className="h-6 w-6 text-white" aria-hidden="true" />
+              <Video className="h-6 w-6 text-white" />
             )}
           </button>
 
           {/* Speaker Button */}
           <button
             onClick={toggleSpeaker}
-            aria-label={isSpeakerOff ? 'Activar altavoz' : 'Silenciar altavoz'}
-            aria-pressed={isSpeakerOff}
             className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${
               isSpeakerOff
                 ? 'bg-red-500 hover:bg-red-600'
@@ -227,19 +221,18 @@ export function VideoCallScreen({ appointmentData, onEndCall }: VideoCallScreenP
             }`}
           >
             {isSpeakerOff ? (
-              <VolumeX className="h-6 w-6 text-white" aria-hidden="true" />
+              <VolumeX className="h-6 w-6 text-white" />
             ) : (
-              <Volume2 className="h-6 w-6 text-white" aria-hidden="true" />
+              <Volume2 className="h-6 w-6 text-white" />
             )}
           </button>
 
           {/* End Call Button */}
           <button
             onClick={handleEndCall}
-            aria-label="Finalizar llamada"
             className="w-14 h-14 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-all"
           >
-            <PhoneOff className="h-6 w-6 text-white" aria-hidden="true" />
+            <PhoneOff className="h-6 w-6 text-white" />
           </button>
         </div>
 

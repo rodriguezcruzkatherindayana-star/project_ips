@@ -23,11 +23,11 @@ interface User {
 interface ResultsScreenProps {
   user: User;
   onDoctorClick?: (doctorId: string) => void;
+  onViewResultDetail: (result: any) => void;
 }
 
-export function ResultsScreen({ user, onDoctorClick }: ResultsScreenProps) {
+export function ResultsScreen({ user, onDoctorClick, onViewResultDetail }: ResultsScreenProps) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedResult, setSelectedResult] = useState<any>(null);
 
   // Mock data for medical results
   const results = [
@@ -148,13 +148,13 @@ export function ResultsScreen({ user, onDoctorClick }: ResultsScreenProps) {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'available':
-        return <Badge className="bg-green-100 text-green-700 font-medium">Disponible</Badge>;
+        return <Badge className="bg-green-100 text-green-700 hover:bg-green-100 font-medium rounded-full px-3 py-1 text-xs border-0">Disponible</Badge>;
       case 'pending':
-        return <Badge className="bg-amber-100 text-amber-700 font-medium">Pendiente</Badge>;
+        return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 font-medium rounded-full px-3 py-1 text-xs border-0">Pendiente</Badge>;
       case 'processing':
-        return <Badge className="bg-blue-100 text-blue-700 font-medium">Procesando</Badge>;
+        return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 font-medium rounded-full px-3 py-1 text-xs border-0">Procesando</Badge>;
       default:
-        return <Badge variant="secondary">{status}</Badge>;
+        return <Badge variant="secondary" className="rounded-full px-3 py-1 text-xs border-0">{status}</Badge>;
     }
   };
 
@@ -175,128 +175,6 @@ export function ResultsScreen({ user, onDoctorClick }: ResultsScreenProps) {
     // Simple logic for demo - in real app this would be more sophisticated
     return 'normal';
   };
-
-  if (selectedResult) {
-    const handleDoctorClick = () => {
-      const doctor = getDoctorByName(selectedResult.doctor);
-      if (doctor && onDoctorClick) {
-        onDoctorClick(doctor.id);
-      }
-    };
-
-    return (
-      <motion.div 
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="p-4 overflow-x-hidden"
-      >
-        <button
-          onClick={() => setSelectedResult(null)}
-          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Volver a resultados</span>
-        </button>
-
-        <Card>
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div>
-                <CardTitle className="text-lg">{selectedResult.name}</CardTitle>
-                <p className="text-sm text-gray-600 mt-1">{selectedResult.type} • {selectedResult.category}</p>
-                <div className="flex items-center gap-1 text-sm text-gray-600 mt-1">
-                  <User className="h-4 w-4" />
-                  <button 
-                    onClick={handleDoctorClick}
-                    className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
-                  >
-                    {selectedResult.doctor}
-                  </button>
-                </div>
-                <p className="text-sm text-gray-600">{selectedResult.date}</p>
-              </div>
-              {getStatusBadge(selectedResult.status)}
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-gray-600">{selectedResult.description}</p>
-
-            {selectedResult.results && (
-              <div className="space-y-3">
-                <h3 className="font-medium">Resultados:</h3>
-                {Object.entries(selectedResult.results).map(([key, result]: [string, any]) => (
-                  <div key={key} className="border border-gray-200 rounded-lg p-3">
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="font-medium">{key}</span>
-                      <Badge variant={result.status === 'normal' ? 'default' : 'destructive'} className="text-xs">
-                        {result.status === 'normal' ? 'Normal' : 'Anormal'}
-                      </Badge>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
-                      <div>
-                        <span className="block">Valor:</span>
-                        <span className="font-medium text-gray-900">{result.value} {result.unit}</span>
-                      </div>
-                      <div>
-                        <span className="block">Referencia:</span>
-                        <span>{result.reference} {result.unit}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {selectedResult.summary && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <h4 className="font-medium text-blue-800 mb-2">Interpretación:</h4>
-                <p className="text-sm text-blue-700">{selectedResult.summary}</p>
-              </div>
-            )}
-
-            <div className="flex gap-2 pt-4">
-              <Button 
-                onClick={() => {
-                  toast.success('Descargando resultado...', {
-                    description: `El archivo ${selectedResult.name}.pdf se está descargando`
-                  });
-                }}
-                className="flex-1 bg-blue-600 hover:bg-blue-700"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Descargar PDF
-              </Button>
-              <Button 
-                onClick={() => {
-                  toast.success('Resultado compartido', {
-                    description: 'El enlace seguro ha sido generado y copiado al portapapeles'
-                  });
-                }}
-                variant="outline" 
-                className="flex-1"
-              >
-                <Shield className="h-4 w-4 mr-2" />
-                Compartir Seguro
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Security Notice */}
-        <Card className="mt-4 bg-gray-50 border-gray-200">
-          <CardContent className="p-4">
-            <div className="flex items-start gap-2">
-              <Shield className="h-4 w-4 text-gray-600 mt-0.5" />
-              <div className="text-sm text-gray-600">
-                <p className="font-medium mb-1">Documento Médico Protegido</p>
-                <p>Este resultado está cifrado y protegido. Solo tú y tu médico tratante pueden acceder a esta información.</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-    );
-  }
 
   return (
     <div className="p-4 overflow-x-hidden">
@@ -323,25 +201,22 @@ export function ResultsScreen({ user, onDoctorClick }: ResultsScreenProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <Card className="cursor-pointer hover:shadow-elevated transition-all hover:scale-[1.02]" onClick={() => setSelectedResult(result)}>
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1">
-                        <p className="text-gray-900">{result.name}</p>
-                        <p className="text-sm text-gray-600">{result.type} • {result.category}</p>
-                      </div>
+                <Card className="bg-white border-gray-100 shadow-sm rounded-[24px] mb-4 cursor-pointer hover:shadow-md active:scale-[0.98] transition-all" onClick={() => onViewResultDetail(result)}>
+                  <CardContent className="p-5 relative">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-semibold text-[17px] text-[#001f3f]">{result.name}</h3>
                       {getStatusBadge(result.status)}
                     </div>
                     
-                    <div className="flex items-center justify-between text-sm text-gray-600">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
+                    <p className="text-gray-500 mb-4 text-[15px]">{result.type} • {result.category}</p>
+                    
+                    <div className="flex justify-between items-center mt-2">
+                      <span className="text-gray-600 font-medium text-[14px]">
                         {result.date}
-                      </div>
-                      <div className="flex items-center gap-1 text-blue-500">
-                        <Eye className="h-4 w-4" />
-                        Ver detalles
-                      </div>
+                      </span>
+                      <span className="text-blue-600 font-semibold text-sm flex items-center gap-1">
+                        Ver Detalle <ChevronRight className="w-4 h-4" />
+                      </span>
                     </div>
                   </CardContent>
                 </Card>

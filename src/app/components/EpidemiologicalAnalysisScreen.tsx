@@ -1,24 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Button } from './ui/button';
 import { 
-  ArrowLeft, 
   MapPin, 
-  AlertTriangle, 
   TrendingUp, 
   TrendingDown, 
   Activity,
   Users,
   Calendar,
   Shield,
-  Info
+  Info,
+  BarChart3
 } from 'lucide-react';
 import { 
   BarChart, 
   Bar, 
-  LineChart, 
   Line, 
   XAxis, 
   YAxis, 
@@ -29,7 +27,7 @@ import {
   Pie,
   Cell,
   Area,
-  AreaChart
+  ComposedChart
 } from 'recharts';
 
 interface EpidemiologicalAnalysisScreenProps {
@@ -37,8 +35,6 @@ interface EpidemiologicalAnalysisScreenProps {
 }
 
 export function EpidemiologicalAnalysisScreen({ onBack }: EpidemiologicalAnalysisScreenProps) {
-  const [selectedTimeframe, setSelectedTimeframe] = useState('month');
-
   // Datos simulados de casos por semana
   const weeklyData = [
     { week: 'Sem 1', casos: 45, tendencia: 'estable' },
@@ -94,30 +90,14 @@ export function EpidemiologicalAnalysisScreen({ onBack }: EpidemiologicalAnalysi
     }
   };
 
-  const getRiskIntensity = (casos: number) => {
-    if (casos > 70) return 'alta';
-    if (casos > 45) return 'media';
-    return 'baja';
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-50 p-6 overflow-x-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 pt-4">
-        <button
-          onClick={onBack}
-          className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          <ArrowLeft className="h-5 w-5 mr-2" />
-          Volver
-        </button>
-        
+      <div className="flex items-center justify-center mb-6 pt-4">
         <div className="text-center">
-          <h1 className="text-xl font-medium text-gray-900">Análisis de Vigilancia Epidemiológica</h1>
-          <p className="text-sm text-gray-600">Dengue · Colombia · Agosto 2024</p>
+          <h1 className="text-xl font-medium text-gray-900">Dengue</h1>
+          <p className="text-sm text-gray-600">Colombia · Agosto 2024</p>
         </div>
-
-        <div className="w-16"></div>
       </div>
 
       <div className="max-w-6xl mx-auto space-y-6">
@@ -199,7 +179,7 @@ export function EpidemiologicalAnalysisScreen({ onBack }: EpidemiologicalAnalysi
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <BarChart className="h-5 w-5 text-blue-600" />
+                  <BarChart3 className="h-5 w-5 text-blue-600" />
                   Casos por Semana - Últimas 8 Semanas
                 </CardTitle>
               </CardHeader>
@@ -207,17 +187,16 @@ export function EpidemiologicalAnalysisScreen({ onBack }: EpidemiologicalAnalysi
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={weeklyData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="week" />
-                      <YAxis />
-                      <Tooltip 
-                        formatter={(value, name) => [value, 'Casos']}
-                        labelFormatter={(label) => `Semana: ${label}`}
-                      />
+                      <CartesianGrid key="grid" strokeDasharray="3 3" />
+                      <XAxis key="xaxis" dataKey="week" />
+                      <YAxis key="yaxis" />
+                      <Tooltip key="tooltip" />
                       <Bar 
+                        key="bar"
                         dataKey="casos" 
                         fill="#3b82f6"
                         radius={[4, 4, 0, 0]}
+                        isAnimationActive={false}
                       />
                     </BarChart>
                   </ResponsiveContainer>
@@ -236,27 +215,31 @@ export function EpidemiologicalAnalysisScreen({ onBack }: EpidemiologicalAnalysi
               <CardContent>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={monthlyTrend}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="mes" />
-                      <YAxis />
-                      <Tooltip />
+                    <ComposedChart data={monthlyTrend}>
+                      <CartesianGrid key="grid" strokeDasharray="3 3" />
+                      <XAxis key="xaxis" dataKey="mes" />
+                      <YAxis key="yaxis" />
+                      <Tooltip key="tooltip" />
                       <Area 
+                        key="area"
                         type="monotone" 
                         dataKey="casos" 
                         stroke="#10b981" 
                         fill="#10b981" 
                         fillOpacity={0.3}
                         name="Casos Reportados"
+                        isAnimationActive={false}
                       />
                       <Line 
+                        key="line"
                         type="monotone" 
                         dataKey="proyeccion" 
                         stroke="#f59e0b" 
                         strokeDasharray="5 5"
                         name="Proyección"
+                        isAnimationActive={false}
                       />
-                    </AreaChart>
+                    </ComposedChart>
                   </ResponsiveContainer>
                 </div>
               </CardContent>
@@ -275,6 +258,7 @@ export function EpidemiologicalAnalysisScreen({ onBack }: EpidemiologicalAnalysi
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
+                          key="pie"
                           data={ageGroupData}
                           cx="50%"
                           cy="50%"
@@ -283,12 +267,13 @@ export function EpidemiologicalAnalysisScreen({ onBack }: EpidemiologicalAnalysi
                           outerRadius={80}
                           fill="#8884d8"
                           dataKey="casos"
+                          isAnimationActive={false}
                         >
                           {ageGroupData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            <Cell key={`cell-${entry.grupo}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
-                        <Tooltip />
+                        <Tooltip key="tooltip" />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
@@ -303,7 +288,7 @@ export function EpidemiologicalAnalysisScreen({ onBack }: EpidemiologicalAnalysi
                 <CardContent>
                   <div className="space-y-4">
                     {ageGroupData.map((group, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={group.grupo} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                         <div className="flex items-center gap-3">
                           <div 
                             className="w-4 h-4 rounded-full"
@@ -347,9 +332,9 @@ export function EpidemiologicalAnalysisScreen({ onBack }: EpidemiologicalAnalysi
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                  {heatMapData.map((zona, index) => (
+                  {heatMapData.map((zona) => (
                     <div 
-                      key={index}
+                      key={zona.zona}
                       className="p-4 rounded-lg border-2 bg-white"
                       style={{
                         borderColor: zona.riesgo === 'alto' ? '#ef4444' : 
@@ -380,9 +365,9 @@ export function EpidemiologicalAnalysisScreen({ onBack }: EpidemiologicalAnalysi
                   <div className="relative z-10">
                     <h3 className="text-lg font-medium text-gray-800 mb-4">Mapa de Intensidad - Bogotá D.C.</h3>
                     <div className="grid grid-cols-2 gap-4 max-w-md">
-                      {heatMapData.slice(0, 4).map((zona, index) => (
+                      {heatMapData.slice(0, 4).map((zona) => (
                         <div 
-                          key={index}
+                          key={zona.zona}
                           className={`
                             p-3 rounded-lg text-white text-center text-sm font-medium
                             ${zona.riesgo === 'alto' ? 'bg-red-500' : 

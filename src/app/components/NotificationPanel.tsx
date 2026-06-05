@@ -2,12 +2,11 @@ import React from 'react';
 import { Bell, X, Calendar, FileText, AlertCircle, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useApp } from '../contexts/AppContext';
-import type { Notification } from '../contexts/AppContext';
 
 interface NotificationPanelProps {
   isOpen: boolean;
   onClose: () => void;
-  onNotificationClick?: (notification: Notification) => void;
+  onNotificationClick?: (notification: any) => void;
 }
 
 export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, onClose, onNotificationClick }) => {
@@ -28,7 +27,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
     }
   };
 
-  const handleNotificationClick = (notification: Notification) => {
+  const handleNotificationClick = (notification: any) => {
     // Mark as read first
     markNotificationAsRead(notification.id);
     
@@ -106,31 +105,27 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
               {notifications.length > 0 ? (
                 <div className="divide-y divide-gray-100">
                   {notifications.map((notification, index) => (
-                    <motion.button
+                    <motion.div
                       key={notification.id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 20 }}
                       transition={{ delay: index * 0.05 }}
-                      className={`w-full text-left p-4 hover:bg-blue-50 transition-colors relative ${
+                      className={`p-4 hover:bg-blue-50 transition-colors cursor-pointer relative ${
                         notification.read ? 'bg-gray-50/50' : 'bg-white'
                       }`}
                       onClick={() => handleNotificationClick(notification)}
-                      aria-label={`${notification.read ? '' : 'No leída: '}${notification.message}`}
                     >
-                      <div
-                        role="button"
-                        tabIndex={0}
+                      <button
                         onClick={(e) => handleClearNotification(e, notification.id)}
-                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleClearNotification(e as any, notification.id); }}
-                        className="absolute top-3 right-3 p-1 hover:bg-gray-200 rounded-full transition-colors z-10 cursor-pointer"
-                        aria-label={`Eliminar notificación: ${notification.message}`}
+                        className="absolute top-3 right-3 p-1 hover:bg-gray-200 rounded-full transition-colors z-10"
+                        aria-label="Eliminar notificación"
                       >
-                        <X className="h-3.5 w-3.5 text-gray-500" aria-hidden="true" />
-                      </div>
-
+                        <X className="h-3.5 w-3.5 text-gray-500" />
+                      </button>
+                      
                       <div className="flex items-start gap-3 pr-8">
-                        <div className="flex-shrink-0 mt-0.5" aria-hidden="true">
+                        <div className="flex-shrink-0 mt-0.5">
                           {getNotificationIcon(notification.type)}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -140,10 +135,10 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
                           <p className="text-xs text-gray-500 mt-1.5">{notification.time}</p>
                         </div>
                         {!notification.read && (
-                          <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2" aria-label="No leída" role="status"></div>
+                          <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>
                         )}
                       </div>
-                    </motion.button>
+                    </motion.div>
                   ))}
                 </div>
               ) : (

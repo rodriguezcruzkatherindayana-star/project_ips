@@ -81,29 +81,28 @@ export function ProfileScreen({ user, onLogout }: ProfileScreenProps) {
         {/* User Profile Card */}
         <Card className="bg-white border-0">
           <CardContent className="p-0">
-            <button
-              className="w-full flex items-center gap-4 p-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-all rounded-3xl text-left"
+            <div 
+              className="flex items-center gap-4 p-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-all rounded-3xl"
               onClick={() => setActiveScreen('profile-full')}
-              aria-label={`Ver perfil completo de ${currentUser?.name || user.name}`}
             >
               {/* Avatar */}
-              <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden" aria-hidden="true">
+              <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
                 {currentUser?.avatar ? (
-                  <img src={currentUser.avatar} alt="" className="w-full h-full object-cover" />
+                  <img src={currentUser.avatar} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
                   <User className="h-7 w-7 text-blue-600" />
                 )}
               </div>
-
+              
               {/* User Info */}
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-gray-900 leading-tight">{currentUser?.name || user.name}</h3>
                 <p className="text-sm text-gray-600">Ver perfil completo</p>
               </div>
-
+              
               {/* Chevron */}
-              <ChevronRight className="h-6 w-6 text-gray-400 flex-shrink-0" aria-hidden="true" />
-            </button>
+              <ChevronRight className="h-6 w-6 text-gray-400 flex-shrink-0" />
+            </div>
           </CardContent>
         </Card>
 
